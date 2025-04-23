@@ -1,40 +1,37 @@
-const input = document.querySelector('.tasks__input');
-const form = document.querySelector('.tasks__control');
-const taskList = document.querySelector('.tasks__list');
-const data = JSON.parse(localStorage.getItem('items'));
-const clinBtn = document.querySelector('.clin');
+(function () {
+  const taskAdd = document.querySelector('.tasks__add');
+  taskAdd.addEventListener('click', (elem) => {
+    elem.preventDefault();
+    const inputMessage = document.querySelector('.tasks__input');
+    inputMessage.value = inputMessage.value.trim();
+    interTasks(inputMessage.value);
+    inputMessage.value = '';
+  });
+})();
 
-let arrItems = localStorage.getItem('items')
-  ? JSON.parse(localStorage.getItem('items'))
-  : [];
-
-form.onsubmit = () => {
-  return false;
-};
-
-let addItem = (text) => {
-  taskList.insertAdjacentHTML(
-    'afterbegin',
-    `<div class="task"><div class="task__title">${text}</div><a href="#" class="task__remove">&times;</a></div>`
-  );
-};
-
-input.onchange = () => {
-  addItem(input.value);
-  arrItems.push(input.value);
-  input.value = '';
-  localStorage.setItem('items', JSON.stringify(arrItems));
-};
-
-data.forEach((item) => {
-  addItem(item);
-});
-
-taskList.onclick = (e) => {
-  if (e.target.closest('.task__remove')) {
-    e.target.closest('.task').remove();
-    let delitedItem = arrItems.indexOf(e.target.previousSibling.innerText);
-    arrItems.splice(delitedItem, 1);
-    localStorage.setItem('items', JSON.stringify(arrItems));
+function interTasks(toDo) {
+  let tasksList = document.querySelector('.tasks__list');
+  if (toDo) {
+    const task = creatTask(toDo);
+    tasksList.appendChild(task);
+    const taskRemove = task.querySelector('.task__remove');
+    taskRemove.addEventListener('click', (elem) => {
+      elem.preventDefault();
+      task.remove();
+    });
   }
-};
+}
+
+function creatTask(toDo) {
+  let task = document.createElement('div');
+  task.setAttribute('class', 'task');
+  task.insertAdjacentHTML(
+    'afterBegin',
+    `<div class="task__title">${toDo}</div>`
+  );
+  task.insertAdjacentHTML(
+    'beforeEnd',
+    `<a href="#" class="task__remove">&times;</a>`
+  );
+  return task;
+}
